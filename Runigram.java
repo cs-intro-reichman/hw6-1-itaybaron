@@ -213,30 +213,37 @@ public class Runigram {
 	 * of the source image.
 	 */
 	public static void morph(Color[][] source, Color[][] target, int n) {
-		
-		int height = source.length;
-		int width = source[0].length;
 
-		// Step through the morph
-		for (int step = 0; step <= n; step++) {
-			double t = (double) step / n;
+    int height = source.length;
+    int width  = source[0].length;
 
-			Color[][] frame = new Color[height][width];
+    // סקלת היעד
+    Color[][] scaledTarget = scaled(target, width, height);
 
-			for (int i = 0; i < height; i++) {
-				for (int j = 0; j < width; j++) {
-					Color s = source[i][j];
-					Color trg = target[i][j];
+    // יצירת קנבס
+    setCanvas(source);
 
-					int r = (int) Math.round((1 - t) * s.getRed()   + t * trg.getRed());
-					int g = (int) Math.round((1 - t) * s.getGreen() + t * trg.getGreen());
-					int b = (int) Math.round((1 - t) * s.getBlue()  + t * trg.getBlue());
+    for (int step = 0; step <= n; step++) {
+        double t = (double) step / n;
 
-					frame[i][j] = new Color(r, g, b);
-			}
-		}
- 	}
+        Color[][] frame = new Color[height][width];
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+
+                frame[i][j] = blend(
+                    source[i][j],
+                    scaledTarget[i][j],
+                    1 - t
+                );
+            }
+        }
+
+        display(frame);
+        StdDraw.pause(40);
+    }
 }
+
 
 	
 	/** Creates a canvas for the given image. */
